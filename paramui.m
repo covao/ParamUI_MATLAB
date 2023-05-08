@@ -4,7 +4,7 @@ classdef paramui < handle
 % - Input: ParameterTable, UsrFunc
 %   - ParameterTable: Containing the following Columns
 %     PrameterVariable, ParameterLabel, InitialValue, Range(Slider:[Min,Max,Step], Selecter:{'A','B'...}, FileName:'*.txt;*.doc', Folder:'folder')
-%   - Example: {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[];'Run','Run Button',[],[]; }
+%   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[];'Run','Run Button',[],[]; }
 %     - Prm structure definition Prm.(ParameterVariable)
 %       Example: Prm.A1=0.5, Prm.F1=false, Prm.Text='Taro',Prm.S1='Two', Prm.Run=true
 %   - UsrFunc: Function handle Example: UserFunc = @(Prm) disp(Prm)
@@ -93,6 +93,7 @@ classdef paramui < handle
                 elseif isempty(initialValue)
                     uibutton(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Text', paramLabel, 'Tag', paramVar,...
                         'ButtonPushedFcn', @(src, ~) obj.actionButtonUpdate(src, paramVar));
+                    obj.Prm.(paramVar) = false;
                 end
             end
             obj.UsrFunc(obj.Prm);
@@ -155,7 +156,7 @@ classdef paramui < handle
         function actionButtonUpdate(obj, ~, paramVar)
             obj.Prm.(paramVar) = true;
             obj.UsrFunc(obj.Prm);
-            obj.Prm.(paramVar) = [];
+            obj.Prm.(paramVar) = false;
         end
 
         function UIClose(obj)
