@@ -4,7 +4,7 @@ classdef paramui < handle
 % - Input: ParameterTable, UsrFunc
 %   - ParameterTable: Containing the following Columns
 %     PrameterVariable, ParameterLabel, InitialValue, Range(Slider:[Min,Max,Step], Selecter:{'A','B'...}, FileName:'*.txt;*.doc', Folder:'folder')
-%   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'Run','Run Button',,[];'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[]; }
+%   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'Run','Run !',false,'button';'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[]; }
 %     - Prm structure definition Prm.(ParameterVariable)
 %       Example: Prm.A1=0.5, Prm.F1=false, Prm.Text='Taro',Prm.S1='Two', Prm.Run=true
 %   - UsrFunc: Function handle Example: UserFunc = @(Prm) disp(Prm)
