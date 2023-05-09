@@ -4,7 +4,7 @@ classdef paramui < handle
 % - Input: ParameterTable, UsrFunc
 %   - ParameterTable: Containing the following Columns
 %     PrameterVariable, ParameterLabel, InitialValue, Range(Slider:[Min,Max,Step], Selecter:{'A','B'...}, FileName:'*.txt;*.doc', Folder:'folder')
-%   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[];'Run','Run Button',[],[]; }
+%   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'Run','Run Button',,[];'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[]; }
 %     - Prm structure definition Prm.(ParameterVariable)
 %       Example: Prm.A1=0.5, Prm.F1=false, Prm.Text='Taro',Prm.S1='Two', Prm.Run=true
 %   - UsrFunc: Function handle Example: UserFunc = @(Prm) disp(Prm)
@@ -19,6 +19,7 @@ classdef paramui < handle
 
     properties
         UsrFunc;
+        IsUsrFunc = false;
         IsAlive = false;
         Prm = {};
         UIFig;
@@ -32,7 +33,10 @@ classdef paramui < handle
         function obj = paramui(ParameterTable, UsrFunc)
             if nargin == 1
                 UsrFunc = @(p) true;
-            end
+                obj.IsUsrFunc = false;
+            else
+               obj.IsUsrFunc = true;
+           end
             if nargin >= 1
                 obj.create_ui(ParameterTable, UsrFunc);
             end
@@ -71,7 +75,12 @@ classdef paramui < handle
                         'ValueChangedFcn', @(src, ~)  obj.spinnerUpdate(src, paramVar));
                     uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel, 'Tooltip',paramLabel);
 
-                elseif islogical(initialValue)
+                elseif islogical(initialValue) && ischar(stepVal) && strcmp(stepVal,'button')
+                    uibutton(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Text', paramLabel, 'Tag', paramVar,...
+                        'ButtonPushedFcn', @(src, ~) obj.actionButtonUpdate(src, paramVar));
+                    obj.Prm.(paramVar) = false;
+
+                elseif islogical(initialValue) && isempty(stepVal)
                     uicheckbox(fig, 'Position', [20, UIHeight - posY - 20, 150, 20], 'Text', paramLabel,'Tag', paramVar, ...
                         'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.checkboxUpdate(src, paramVar));
 
@@ -90,15 +99,10 @@ classdef paramui < handle
                             'ButtonPushedFcn', @(src, ~)  obj.browseButtonUpdate(src, paramVar, stepVal));
                     end
 
-                elseif isempty(initialValue)
-                    uibutton(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Text', paramLabel, 'Tag', paramVar,...
-                        'ButtonPushedFcn', @(src, ~) obj.actionButtonUpdate(src, paramVar));
-                    obj.Prm.(paramVar) = false;
                 end
             end
             obj.UsrFunc(obj.Prm);
         end
-
 
         function sliderUpdate(obj, src, paramVar)
             spinner = findobj(src.Parent, 'Tag', [paramVar '_Spinner']);
@@ -154,9 +158,13 @@ classdef paramui < handle
         end
 
         function actionButtonUpdate(obj, ~, paramVar)
-            obj.Prm.(paramVar) = true;
-            obj.UsrFunc(obj.Prm);
-            obj.Prm.(paramVar) = false;
+            if obj.IsUsrFunc
+                obj.UsrFunc(obj.Prm);
+                obj.Prm.(paramVar) = false;
+            else
+                 obj.Prm.(paramVar) = true;
+            end
+
         end
 
         function UIClose(obj)

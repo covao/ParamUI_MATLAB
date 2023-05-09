@@ -10,7 +10,7 @@ ParameterTable = {
     'Name2','Name 2','Jiro', [];
     'File1','File 1','', '*.m; *.asv';
     'Folder','Folder1','', 'folder';
-    'Run', 'Run!', [], [];
+    'Run', 'Run!', false, 'button';
  };
 
 %Example 1 Run by UI Event 
