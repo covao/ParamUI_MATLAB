@@ -21,7 +21,7 @@ function lifegame()
 
     while pu.IsAlive
         if pu.Prm.Restart
-            hAx = axes(hFig, 'XLim', [0, pu.Prm.GridSize], 'YLim', [0, pu.Prm.GridSize], 'XTick', [], 'YTick', []);
+            set(hAx, 'XLim', [0, pu.Prm.GridSize], 'YLim', [0, pu.Prm.GridSize], 'XTick', [], 'YTick', []);
             lifeGrid = init_life_grid(pu.Prm.GridSize, pu.Prm.AliveRatio);
             hCells = imagesc(hAx, lifeGrid);
             colormap(hAx, [1 1 1; 0 0.6 0]);
