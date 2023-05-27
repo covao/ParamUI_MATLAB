@@ -6,8 +6,8 @@
 ~~~matlab
 mkdir('./paramui_demo');
 cd('./paramui_demo');
-websave('paramui.m','https://github.com/covao/ParamuUI_MATLAB/raw/main/paramui.m');
-websave('hello_paramui.m','https://github.com/covao/ParamuUI_MATLAB/raw/main/hello_paramui.m');
+websave('paramui.m','https://github.com/covao/ParamUI_MATLAB/raw/main/paramui.m');
+websave('hello_paramui.m','https://github.com/covao/ParamUI_MATLAB/raw/main/hello_paramui.m');
 
 ~~~
 # Usage
