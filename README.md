@@ -8,6 +8,7 @@ mkdir('./paramui_demo');
 cd('./paramui_demo');
 websave('paramui.m','https://github.com/covao/ParamuUI_MATLAB/raw/main/paramui.m');
 websave('hello_paramui.m','https://github.com/covao/ParamuUI_MATLAB/raw/main/hello_paramui.m');
+
 ~~~
 # Usage
 ## Parameter table definition
@@ -36,6 +37,7 @@ ParameterTable = {
     'Folder','Folder1','', 'folder';
     'Run', 'Run!', false, 'button';
  };
+ 
 ~~~
 
 ## Example 1: Click & Run
@@ -51,6 +53,7 @@ while(pu.IsAlive)
     disp(pu.Prm);
     pause(1);
 end
+
 ~~~
 
 # ParamUI Prompt Designer
