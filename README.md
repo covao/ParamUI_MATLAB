@@ -42,8 +42,9 @@ ParameterTable = {
 
 ## Example 1: Click & Run
 ~~~ matlab
-usrFunc = @(Prm) disp(Prm)
-paramui(ParameterTable, @usrFunc);
+usrFunc = @(Prm) disp(Prm);
+paramui(ParameterTable, usrFunc);
+
 ~~~
 
 ## Example 2: Loop & Get Parameters
@@ -51,7 +52,7 @@ paramui(ParameterTable, @usrFunc);
 pu = paramui(ParameterTable);
 while(pu.IsAlive)
     disp(pu.Prm);
-    pause(1);
+    pause(0.5);
 end
 
 ~~~
