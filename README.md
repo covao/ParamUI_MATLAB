@@ -63,9 +63,11 @@ end
 - Generate prompt of UI app using LLM
 Try prompt! e.g. ChatGPT, Bing Chat, Bard  
  [Start ParamUI Prompt Designer](https://covao.github.io/ParamUI/html/paramui_prompt_designer.html?lang=MATLAB)
+ ![Prompt Designer](img/paramui_prompt_designer.gif)
 
 # Demo
-- Lifegame
+- Life Game
+![Life Game](img/lifegame_matlab.gif)
 - Mandelblot
 
 # Related Sites
