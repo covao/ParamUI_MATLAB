@@ -159,6 +159,7 @@ classdef paramui < handle
 
         function actionButtonUpdate(obj, ~, paramVar)
             if obj.IsUsrFunc
+                obj.Prm.(paramVar) = true;
                 obj.UsrFunc(obj.Prm);
                 obj.Prm.(paramVar) = false;
             else
