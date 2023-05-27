@@ -66,9 +66,9 @@ Try prompt! e.g. ChatGPT, Bing Chat, Bard
  ![Prompt Designer](img/paramui_prompt_designer.gif)
 
 # Demo
-- Life Game
+- [Life Game](lifegame.m)
 ![Life Game](img/lifegame_matlab.gif)
-- Mandelblot
+- [Mandelblot](mandelbrot.m)
 
 # Related Sites
 - [ParamUI Python](https://github.com/covao/ParamUI)
