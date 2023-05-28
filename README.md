@@ -69,6 +69,8 @@ Try prompt! e.g. ChatGPT, Bing Chat, Bard
 - [Life Game](lifegame.m)
 ![Life Game](img/lifegame_matlab.gif)
 - [Mandelblot](mandelbrot.m)
-
+![Mandelblot](img/mandelblot_matlab.gif)
+- [Bouncing Spheres](bouncing_spheres.m)
+![Bouncing Spheres](img/bouncing_spheres_matlab.gif)
 # Related Sites
 - [ParamUI Python](https://github.com/covao/ParamUI)
