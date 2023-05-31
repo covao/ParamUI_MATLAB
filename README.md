@@ -19,8 +19,11 @@ Parameter table is containing the following columns
 - Parameter Label
 - Initial Value
 - Range 
-  - Slider: [Min,Max,Step],
-  - Selecter: {'A','B'...}
+  - Slider: [Min,Max,Step]
+  - Check Box: []  
+  - Edit Box: []  
+  - Button: 'button'  
+  - Selecter: {'A','B'}
   - FileName: '\*.txt;\*.doc'
   - Button: 'button'
 
