@@ -21,7 +21,7 @@ Parameter table is containing the following columns
 - Range 
   - Slider: [Min,Max,Step],
   - Selecter: {'A','B'...}
-  - FileName: '*.txt;*.doc'
+  - FileName: '\*.txt;\*.doc'
   - Button: 'button'
 
 ~~~ matlab
