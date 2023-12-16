@@ -66,7 +66,7 @@ end
 ~~~ matlab
 usrFunc = @(Prm) disp(Prm);
 paramui(ParameterTable, usrFunc, false);
-disp(pu.Prm.)
+disp(pu.Prm)
 
 ~~~
 
