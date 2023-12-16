@@ -62,9 +62,19 @@ end
 
 ~~~
 
+## Example 3:  Do not display UI for debug
+~~~ matlab
+usrFunc = @(Prm) disp(Prm);
+paramui(ParameterTable, usrFunc, false);
+disp(pu.Prm.)
+
+~~~
+
+
+
 # [ParamUI Prompt Designer](https://covao.github.io/ParamUI/html/paramui_prompt_designer.html?lang=MATLAB)
 - Generate prompt of UI app using LLM
-Try prompt! e.g. ChatGPT, Bing Chat, Bard  
+Try prompt! e.g. ChatGPT, Bing Chat, Bard, MATLAB AI Chat Playground
  [Start ParamUI Prompt Designer](https://covao.github.io/ParamUI/html/paramui_prompt_designer.html?lang=MATLAB)
  ![Prompt Designer](img/paramui_prompt_designer.gif)
 
