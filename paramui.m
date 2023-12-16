@@ -1,7 +1,7 @@
 classdef paramui < handle
-% paramui(ParameterTable, UsrFunc)
-% - Processing: Create UI from ParameterTable, assign UI parts values to Prm structure, call user function
-% - Input: ParameterTable, UsrFunc
+% paramui(ParameterTable, UsrFunc, ShowUI)
+% - Processing: Create UI from ParameterTable based on ShowUI flag, assign UI parts values to Prm structure, call user function
+% - Input: ParameterTable, UsrFunc, ShowUI (optional, default=true)
 %   - ParameterTable: Containing the following Columns
 %     PrameterVariable, ParameterLabel, InitialValue, Range(Slider:[Min,Max,Step], Selecter:{'A','B'...}, FileName:'*.txt;*.doc', Folder:'folder')
 %   - Example:  PrameterVariable = {'A1','Num 1',0.5, [0, 1, 0.1];'F1','Flag 1',true,[];'Run','Run !',false,'button';'S1','Select 1','Two',{'One','Two','Three'};'Name','Name 1','Taro',[]; }
@@ -21,6 +21,7 @@ classdef paramui < handle
         UsrFunc;
         IsUsrFunc = false;
         IsAlive = false;
+        ShowUI = true;
         Prm = {};
         UIFig;
         UsrCloseFunc = @() (true);
@@ -30,15 +31,19 @@ classdef paramui < handle
         UIYSpace = 30;
     end
     methods
-        function obj = paramui(ParameterTable, UsrFunc)
-            if nargin == 1
-                UsrFunc = @(p) true;
+        function obj = paramui(ParameterTable, UsrFunc, ShowUI)
+            if nargin == 1 || isempty(UsrFunc)
+                obj.UsrFunc = @(p) true;
                 obj.IsUsrFunc = false;
             else
+               obj.UsrFunc = UsrFunc;
                obj.IsUsrFunc = true;
-           end
+            end
+            if nargin == 3
+                obj.ShowUI = ShowUI;
+            end
             if nargin >= 1
-                obj.create_ui(ParameterTable, UsrFunc);
+                obj.create_ui(ParameterTable);
             end
         end
 
@@ -47,15 +52,16 @@ classdef paramui < handle
             delete(obj.UIFig);
         end
 
-        function create_ui(obj, ParameterTable, UsrFunc)
+        function create_ui(obj, ParameterTable)
             obj.IsAlive = true;
-            obj.UsrFunc = UsrFunc;
             obj.Prm = struct();
             UIHeight = numel(ParameterTable(:, 1)) * obj.UIYSpace + obj.UIYSpace;
             FigHeight = min(UIHeight, obj.UIMaxHeight);
-            obj.UIFig = uifigure('Name',obj.UIName, 'Scrollable','on', 'CloseRequestFcn', @(~,~) obj.UIClose);
-            obj.UIFig.Position = [100, 100, obj.UIWidth, FigHeight];
-            fig = obj.UIFig;
+            if obj.ShowUI
+                obj.UIFig = uifigure('Name',obj.UIName, 'Scrollable','on', 'CloseRequestFcn', @(~,~) obj.UIClose);
+                obj.UIFig.Position = [100, 100, obj.UIWidth, FigHeight];
+                fig = obj.UIFig;
+            end
             for i = 1:size(ParameterTable, 1)
                 paramVar = ParameterTable{i, 1};
                 paramLabel = ParameterTable{i, 2};
@@ -63,42 +69,42 @@ classdef paramui < handle
                 stepVal = ParameterTable{i, 4};
                 obj.Prm.(paramVar) = initialValue;
                 posY = obj.UIYSpace * i;
-                if ~isempty(initialValue) && isnumeric(initialValue)
-                    minVal = stepVal(1);
-                    maxVal = stepVal(2);
-                    step_val = stepVal(3);
-                    uislider(fig, 'Position', [120, UIHeight - posY- 10, 120, 3], 'Tag', paramVar,...
-                        'Limits', [minVal, maxVal], 'Value', initialValue, 'MajorTicks', [], 'MinorTicks', [], ...
-                        'ValueChangedFcn', @(src, ~) obj.sliderUpdate(src, paramVar));
-                    uispinner(fig, 'Position', [250, UIHeight - posY - 20, 80, 20], 'Tag', [paramVar '_Spinner'], ...
-                        'Limits', [minVal, maxVal], 'Value', initialValue, 'Step', step_val, ...
-                        'ValueChangedFcn', @(src, ~)  obj.spinnerUpdate(src, paramVar));
-                    uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel, 'Tooltip',paramLabel);
-
-                elseif islogical(initialValue) && ischar(stepVal) && strcmp(stepVal,'button')
-                    uibutton(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Text', paramLabel, 'Tag', paramVar,...
-                        'ButtonPushedFcn', @(src, ~) obj.actionButtonUpdate(src, paramVar));
-                    obj.Prm.(paramVar) = false;
-
-                elseif islogical(initialValue) && isempty(stepVal)
-                    uicheckbox(fig, 'Position', [20, UIHeight - posY - 20, 150, 20], 'Text', paramLabel,'Tag', paramVar, ...
-                        'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.checkboxUpdate(src, paramVar));
-
-                elseif iscell(stepVal)
-                    uidropdown(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Items', stepVal,'Tag', paramVar,  ...
-                        'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.dropdownUpdate(src, paramVar));
-                    uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel,'Tooltip',paramLabel);
-
-                elseif ischar(initialValue)
-                    uieditfield(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Tag', paramVar,...
-                        'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.editFieldUpdate(src, paramVar));
-                    uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel, 'Tooltip',paramLabel );
-                    filePattern = '\*\.|folder';
-                    if ischar(stepVal) && ~isempty(regexp(stepVal, filePattern, 'once'))
-                        uibutton(fig, 'Position', [280, UIHeight - posY - 20, 50, 20], 'Text', 'Browse',...
-                            'ButtonPushedFcn', @(src, ~)  obj.browseButtonUpdate(src, paramVar, stepVal));
+                if obj.ShowUI
+                    if ~isempty(initialValue) && isnumeric(initialValue)
+                        minVal = stepVal(1);
+                        maxVal = stepVal(2);
+                        step_val = stepVal(3);
+                        uislider(fig, 'Position', [120, UIHeight - posY- 10, 120, 3], 'Tag', paramVar,...
+                            'Limits', [minVal, maxVal], 'Value', initialValue, 'MajorTicks', [], 'MinorTicks', [], ...
+                            'ValueChangedFcn', @(src, ~) obj.sliderUpdate(src, paramVar));
+                        uispinner(fig, 'Position', [250, UIHeight - posY - 20, 80, 20], 'Tag', [paramVar '_Spinner'], ...
+                            'Limits', [minVal, maxVal], 'Value', initialValue, 'Step', step_val, ...
+                            'ValueChangedFcn', @(src, ~)  obj.spinnerUpdate(src, paramVar));
+                        uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel, 'Tooltip',paramLabel);
+    
+                    elseif islogical(initialValue) && ischar(stepVal) && strcmp(stepVal,'button')
+                        uibutton(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Text', paramLabel, 'Tag', paramVar,...
+                            'ButtonPushedFcn', @(src, ~) obj.actionButtonUpdate(src, paramVar));
+    
+                    elseif islogical(initialValue) && isempty(stepVal)
+                        uicheckbox(fig, 'Position', [20, UIHeight - posY - 20, 150, 20], 'Text', paramLabel,'Tag', paramVar, ...
+                            'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.checkboxUpdate(src, paramVar));
+    
+                    elseif iscell(stepVal)
+                        uidropdown(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Items', stepVal,'Tag', paramVar,  ...
+                            'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.dropdownUpdate(src, paramVar));
+                        uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel,'Tooltip',paramLabel);
+    
+                    elseif ischar(initialValue)
+                        uieditfield(fig, 'Position', [120, UIHeight - posY - 20, 150, 20], 'Tag', paramVar,...
+                            'Value', initialValue, 'ValueChangedFcn', @(src, ~) obj.editFieldUpdate(src, paramVar));
+                        uilabel(fig, 'Position', [20, UIHeight - posY - 20, 100, 20], 'Text', paramLabel, 'Tooltip',paramLabel );
+                        filePattern = '\*\.|folder';
+                        if ischar(stepVal) && ~isempty(regexp(stepVal, filePattern, 'once'))
+                            uibutton(fig, 'Position', [280, UIHeight - posY - 20, 50, 20], 'Text', 'Browse',...
+                                'ButtonPushedFcn', @(src, ~)  obj.browseButtonUpdate(src, paramVar, stepVal));
+                        end
                     end
-
                 end
             end
             obj.UsrFunc(obj.Prm);
